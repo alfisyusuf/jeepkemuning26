@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+@theme {
+  /* Ekstraksi Palet Warna dari Desain Anda */
+  --color-brand-forest: #182b1c;
+  --color-brand-green: #244028;
+  --color-brand-red: #c3272b;
+  --color-brand-mustard: #f6aa1c;
+  --color-brand-cream: #f9f8f3;
+  --color-brand-dark: #111a13;
+  
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-heading: 'Oswald', sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* Utilitas untuk Lightbox Galeri */
+body.lightbox-open { 
+  overflow: hidden; 
+}
