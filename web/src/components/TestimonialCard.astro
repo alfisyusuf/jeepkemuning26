@@ -1,0 +1,35 @@
+---
+import { urlFor } from '../lib/sanity'
+
+interface Props {
+  namaPelanggan: string
+  asalInstansi?: string
+  foto?: any
+  rating: number
+  isiTestimoni: string
+}
+
+const { namaPelanggan, asalInstansi, foto, rating, isiTestimoni } = Astro.props
+---
+
+<div class="bg-white border border-gray-100 rounded-xl p-6 md:p-8 shadow-sm flex flex-col h-full">
+  <div class="flex text-brand-mustard mb-4">
+    {Array.from({ length: 5 }).map((_, i) => (
+      <i class={`fa-solid fa-star ${i < rating ? '' : 'text-gray-200'}`}></i>
+    ))}
+  </div>
+  <p class="text-sm text-gray-700 leading-relaxed italic flex-1">&ldquo;{isiTestimoni}&rdquo;</p>
+  <div class="flex items-center gap-3 mt-6 pt-6 border-t border-gray-100">
+    <div class="w-11 h-11 rounded-full bg-brand-forest/10 overflow-hidden flex items-center justify-center text-brand-forest shrink-0">
+      {foto ? (
+        <img src={urlFor(foto).width(88).height(88).url()} alt={namaPelanggan} class="w-full h-full object-cover" />
+      ) : (
+        <i class="fa-solid fa-user"></i>
+      )}
+    </div>
+    <div>
+      <p class="font-bold text-brand-forest text-sm">{namaPelanggan}</p>
+      {asalInstansi && <p class="text-xs text-gray-500">{asalInstansi}</p>}
+    </div>
+  </div>
+</div>

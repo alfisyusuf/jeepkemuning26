@@ -1,0 +1,169 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Lightbox from '../../components/Lightbox.astro'
+import PortableText from '../../components/PortableText.astro'
+import { client, urlFor } from '../../lib/sanity'
+import { semuaPaketSlugQuery, paketBySlugQuery, siteSettingsQuery } from '../../lib/queries'
+
+export async function getStaticPaths() {
+  const slugs = await client.fetch(semuaPaketSlugQuery)
+  return slugs.map((item: { slug: string }) => ({ params: { slug: item.slug } }))
+}
+
+const { slug } = Astro.params
+const [paket, siteSettings] = await Promise.all([
+  client.fetch(paketBySlugQuery, { slug }),
+  client.fetch(siteSettingsQuery),
+])
+
+if (!paket) {
+  return Astro.redirect('/404')
+}
+
+function waLinkFor(tier: any, siteWhatsapp?: string) {
+  const nomor = siteWhatsapp || ''
+  const teks = tier.teksWhatsApp || `Halo Admin, saya tertarik ingin booking Paket ${paket.nama} *${tier.namaTier}*. Bisa dibantu cek ketersediaan jadwalnya?`
+  return `https://wa.me/${nomor}?text=${encodeURIComponent(teks)}`
+}
+---
+
+<BaseLayout title={paket.seo?.metaTitle || paket.nama} description={paket.seo?.metaDescription || paket.heroDeskripsi} ogImage={paket.seo?.ogImage}>
+
+  <!-- Hero -->
+  <section class="relative w-full h-[100svh] flex flex-col justify-center items-center overflow-hidden bg-brand-dark">
+    <div class="absolute inset-0 w-full h-full">
+      {paket.heroSlides?.map((slide: any, i: number) => (
+        <div
+          class="hero-slide absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-1000 ease-in-out"
+          class:list={[i === 0 ? 'opacity-100' : 'opacity-0']}
+          style={`background-image: url('${urlFor(slide).width(1920).url()}')`}
+        ></div>
+      ))}
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-t from-brand-forest/95 via-black/60 to-black/30 z-0"></div>
+    <div class="relative z-10 max-w-5xl mx-auto px-6 w-full flex flex-col justify-center items-center text-center mt-12">
+      {paket.heroKicker && (
+        <div class="bg-brand-red text-white text-[10px] md:text-xs font-bold px-4 py-1.5 rounded-sm mb-4 md:mb-6 w-max uppercase tracking-widest shadow-lg">
+          {paket.heroKicker}
+        </div>
+      )}
+      <h1 class="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-brand-cream leading-none tracking-tight mb-6 uppercase drop-shadow-xl">
+        {paket.nama}
+      </h1>
+      <p class="text-white/90 text-base md:text-xl max-w-2xl mb-10 leading-relaxed font-medium drop-shadow-md">{paket.heroDeskripsi}</p>
+      <a href="#pilihan-paket" class="justify-center bg-brand-mustard hover:bg-yellow-500 text-brand-forest font-bold px-8 py-4 rounded-md flex items-center gap-2 transition-transform hover:-translate-y-1 shadow-lg text-sm md:text-base">
+        Lihat Pilihan Rute & Harga <i class="fa-solid fa-arrow-down"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- Deskripsi lengkap -->
+  {paket.deskripsiLengkap && (
+    <section class="w-full py-16 bg-white relative z-10 border-b border-gray-100">
+      <div class="max-w-4xl mx-auto px-6 text-center article-content">
+        <PortableText value={paket.deskripsiLengkap} />
+      </div>
+    </section>
+  )}
+
+  <!-- Pilihan Harga -->
+  <section id="pilihan-paket" class="w-full py-20 bg-brand-cream relative z-10">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col items-center mb-14 text-center">
+        <h2 class="font-heading text-4xl lg:text-5xl font-bold text-brand-forest uppercase tracking-wide">
+          Daftar Harga <span class="text-brand-mustard">{paket.nama}</span>
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {paket.tierHarga?.map((tier: any) => (
+          <div class:list={[
+            'bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col relative transition-transform hover:-translate-y-2 duration-300',
+            tier.rekomendasi ? 'border-2 border-brand-mustard transform md:-translate-y-4 shadow-[0_10px_40px_rgba(0,0,0,0.1)]' : 'border border-gray-100',
+          ]}>
+            {tier.rekomendasi && (
+              <div class="bg-brand-mustard text-brand-forest text-center py-2 font-bold text-sm uppercase tracking-widest">
+                Rekomendasi Terbaik
+              </div>
+            )}
+            <div class="h-48 w-full relative">
+              {tier.foto && <img src={urlFor(tier.foto).width(600).height(400).url()} alt={tier.namaTier} class="w-full h-full object-cover" />}
+              {tier.badge && (
+                <div class="absolute top-4 right-4 bg-brand-forest/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-sm uppercase tracking-wider">
+                  {tier.badge}
+                </div>
+              )}
+            </div>
+            <div class="p-6 md:p-8 flex-1 flex flex-col">
+              <h4 class="font-heading text-2xl font-bold text-brand-forest uppercase tracking-wide mb-1">{tier.namaTier}</h4>
+              <div class="flex items-baseline gap-1 text-brand-red mb-4 border-b border-gray-100 pb-6">
+                <span class="text-lg font-bold">Rp</span>
+                <span class="text-4xl font-black tracking-tight">{tier.harga?.toLocaleString('id-ID')}</span>
+                <span class="text-sm text-gray-500 font-medium">{tier.satuan}</span>
+              </div>
+              {tier.kapasitas && (
+                <div class="flex items-center gap-3 text-sm text-gray-700 font-medium mb-3">
+                  <div class="w-8 h-8 rounded-full bg-brand-cream flex items-center justify-center text-brand-mustard shrink-0"><i class="fa-solid fa-users"></i></div>
+                  <span>{tier.kapasitas}</span>
+                </div>
+              )}
+              {tier.rute && (
+                <div class="flex items-start gap-3 text-sm text-gray-700 font-medium mb-6">
+                  <div class="w-8 h-8 rounded-full bg-brand-cream flex items-center justify-center text-brand-red shrink-0 mt-1"><i class="fa-solid fa-map-location-dot"></i></div>
+                  <span class="leading-relaxed"><strong class="block text-brand-forest">Rute Perjalanan:</strong>{tier.rute}</span>
+                </div>
+              )}
+              {tier.fasilitas?.length > 0 && (
+                <>
+                  <h5 class="text-sm font-bold text-brand-forest mb-3">Fasilitas Termasuk:</h5>
+                  <ul class="flex flex-col gap-2 mb-8">
+                    {tier.fasilitas.map((f: string) => (
+                      <li class="flex items-start gap-2 text-sm text-gray-600"><i class="fa-solid fa-check text-brand-green mt-1"></i> {f}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              <a
+                href={waLinkFor(tier, siteSettings?.whatsapp)}
+                target="_blank"
+                class:list={[
+                  'mt-auto w-full py-3.5 rounded-md font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-md',
+                  tier.rekomendasi ? 'bg-brand-mustard hover:bg-yellow-500 text-brand-forest' : 'bg-brand-red hover:bg-red-800 text-white',
+                ]}
+              >
+                <i class="fa-brands fa-whatsapp text-lg"></i> Booking Sekarang
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Galeri -->
+  {paket.galeri?.length > 0 && (
+    <section class="w-full py-24 bg-white relative z-10 border-t border-gray-100">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col items-center mb-12 text-center">
+          <h2 class="font-heading text-4xl lg:text-5xl font-bold text-brand-forest uppercase tracking-wide">
+            Galeri <span class="text-brand-mustard">{paket.nama}</span>
+          </h2>
+        </div>
+        <Lightbox images={paket.galeri} />
+      </div>
+    </section>
+  )}
+
+</BaseLayout>
+
+<script>
+  const slides = document.querySelectorAll('.hero-slide')
+  let current = 0
+  if (slides.length > 1) {
+    setInterval(() => {
+      slides[current].classList.replace('opacity-100', 'opacity-0')
+      current = (current + 1) % slides.length
+      slides[current].classList.replace('opacity-0', 'opacity-100')
+    }, 5000)
+  }
+</script>

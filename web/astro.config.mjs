@@ -1,22 +1,22 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
-import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
 
 export default defineConfig({
-  output: 'server', // Wajib untuk Cloudflare SSR
-  adapter: cloudflare(),
+  // Kita HAPUS baris `output: 'server'` dan `adapter: cloudflare()`
+  // Karena secara default Astro sudah mode 'static'
+  
   vite: {
-    plugins: [tailwindcss()] // Menggunakan Tailwind v4 terbaru
+    plugins: [tailwindcss()]
   },
   integrations: [
     react(),
     sanity({
       projectId: 'mgy2soqp',
       dataset: 'production',
-      useCdn: false, // Diset false karena kita pakai SSR Server
-      studioBasePath: '/admin', // Akses dashboard klien di /admin
+      useCdn: false, // Wajib 'false' untuk statis agar selalu menarik data paling baru saat di-build
+      studioBasePath: '/admin',
     })
   ]
 });

@@ -1,0 +1,43 @@
+---
+interface FaqItemType { pertanyaan: string; jawaban: string }
+interface Props { items: FaqItemType[] }
+const { items = [] } = Astro.props
+---
+
+<div class="flex flex-col gap-4">
+  {items.map((item) => (
+    <div class="faq-item bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+      <button class="faq-btn w-full text-left p-5 flex items-center justify-between font-semibold text-gray-800 hover:bg-gray-50 focus:outline-none transition-colors">
+        <span class="flex items-center gap-3">
+          <i class="fa-solid fa-circle-question text-brand-forest text-lg"></i>
+          {item.pertanyaan}
+        </span>
+        <i class="fa-solid fa-chevron-down text-brand-mustard transition-transform duration-300 icon-arrow"></i>
+      </button>
+      <div class="faq-answer hidden px-5 pb-5 text-gray-600 text-sm md:text-base leading-relaxed border-t border-gray-100 pt-3">
+        {item.jawaban}
+      </div>
+    </div>
+  ))}
+</div>
+
+<script>
+  const faqItems = document.querySelectorAll('.faq-item')
+  faqItems.forEach((item) => {
+    const btn = item.querySelector('.faq-btn')
+    const answer = item.querySelector('.faq-answer')
+    const icon = item.querySelector('.icon-arrow')
+
+    btn?.addEventListener('click', () => {
+      const isOpen = !answer?.classList.contains('hidden')
+      faqItems.forEach((other) => {
+        other.querySelector('.faq-answer')?.classList.add('hidden')
+        other.querySelector('.icon-arrow')?.classList.remove('rotate-180')
+      })
+      if (!isOpen) {
+        answer?.classList.remove('hidden')
+        icon?.classList.add('rotate-180')
+      }
+    })
+  })
+</script>

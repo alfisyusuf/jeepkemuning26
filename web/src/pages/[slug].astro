@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PortableText from '../components/PortableText.astro'
+import { client, urlFor } from '../lib/sanity'
+import { semuaHalamanSlugQuery, halamanBySlugQuery } from '../lib/queries'
+
+// Slug yang sudah dipakai route lain, tidak boleh bentrok dengan "halaman"
+const RESERVED_SLUGS = ['paket-wisata', 'artikel', '404']
+
+export async function getStaticPaths() {
+  const slugs = await client.fetch(semuaHalamanSlugQuery)
+  return slugs
+    .filter((item: { slug: string }) => !RESERVED_SLUGS.includes(item.slug))
+    .map((item: { slug: string }) => ({ params: { slug: item.slug } }))
+}
+
+const { slug } = Astro.params
+const halaman = await client.fetch(halamanBySlugQuery, { slug })
+
+if (!halaman) {
+  return Astro.redirect('/404')
+}
+---
+
+<BaseLayout title={halaman.seo?.metaTitle || halaman.judul} description={halaman.seo?.metaDescription} ogImage={halaman.seo?.ogImage}>
+
+  <section class="relative w-full pt-32 pb-16 md:pt-40 md:pb-24 flex flex-col justify-center items-center bg-brand-forest overflow-hidden border-b-8 border-brand-mustard">
+    {halaman.gambarHero && (
+      <div class="absolute inset-0 w-full h-full bg-cover bg-center opacity-30" style={`background-image: url('${urlFor(halaman.gambarHero).width(1600).url()}')`}></div>
+    )}
+    <div class="relative z-10 max-w-3xl mx-auto px-6 text-center">
+      {halaman.kicker && <p class="text-brand-mustard font-bold text-xs md:text-sm tracking-widest uppercase mb-3">{halaman.kicker}</p>}
+      <h1 class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold text-white uppercase tracking-wide drop-shadow-md">{halaman.judul}</h1>
+    </div>
+  </section>
+
+  <section class="w-full py-16 md:py-20 bg-white relative z-10">
+    <div class="max-w-3xl mx-auto px-6">
+      <PortableText value={halaman.konten} />
+    </div>
+  </section>
+
+</BaseLayout>

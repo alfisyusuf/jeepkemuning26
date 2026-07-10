@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { client, urlFor } from '../../lib/sanity'
+import { arsipArtikelQuery, semuaKategoriQuery } from '../../lib/queries'
+
+const [artikelList, kategoriList] = await Promise.all([
+  client.fetch(arsipArtikelQuery),
+  client.fetch(semuaKategoriQuery),
+])
+
+function formatTanggal(iso: string) {
+  return new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+---
+
+<BaseLayout title="Artikel" description="Tips wisata, panduan, dan cerita seru dari Jeep Kemuning.">
+
+  <section class="relative w-full pt-32 pb-16 md:pt-40 md:pb-24 flex flex-col justify-center items-center bg-brand-forest overflow-hidden border-b-8 border-brand-mustard">
+    <div class="relative z-10 max-w-3xl mx-auto px-6 text-center">
+      <h1 class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold text-white uppercase tracking-wide drop-shadow-md">
+        Artikel & <span class="text-brand-mustard">Tips Wisata</span>
+      </h1>
+      <p class="text-white/80 mt-4 text-sm md:text-base max-w-2xl mx-auto">Temukan ragam informasi menarik, panduan liburan, hingga promo terbaru dari Jeep Kemuning.</p>
+    </div>
+  </section>
+
+  <main class="w-full py-12 md:py-20 bg-brand-cream relative z-10">
+    <div class="max-w-7xl mx-auto px-6">
+
+      <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 md:gap-3 mb-12" id="filter-kategori">
+        <button data-kategori="semua" class="filter-btn px-5 py-2 rounded-full text-sm font-bold bg-brand-red text-white shadow-sm transition-colors">Semua Artikel</button>
+        {kategoriList.map((k: any) => (
+          <button data-kategori={k.slug} class="filter-btn px-5 py-2 rounded-full text-sm font-bold bg-white text-gray-600 border border-gray-200 hover:border-brand-mustard hover:text-brand-forest transition-colors shadow-sm">
+            {k.nama}
+          </button>
+        ))}
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" id="grid-artikel">
+        {artikelList.map((a: any) => (
+          <a href={`/artikel/${a.slug}`} class="artikel-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-kategori={a.kategori?.slug || ''}>
+            <div class="h-56 w-full relative overflow-hidden">
+              {a.gambarUtama && <img src={urlFor(a.gambarUtama).width(600).height(400).url()} alt={a.judul} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />}
+              {a.kategori && (
+                <div class="absolute top-4 left-4 bg-brand-mustard text-brand-forest text-[10px] font-bold px-3 py-1.5 rounded-sm uppercase tracking-wider">{a.kategori.nama}</div>
+              )}
+            </div>
+            <div class="p-6 md:p-8 flex flex-col flex-1">
+              <div class="flex items-center gap-2 text-xs text-gray-500 mb-3 font-semibold">
+                <i class="fa-regular fa-calendar text-brand-red"></i> {formatTanggal(a.tanggalTerbit)}
+              </div>
+              <h4 class="font-bold text-2xl text-brand-forest mb-3 leading-snug group-hover:text-brand-red transition-colors font-heading tracking-wide">{a.judul}</h4>
+              <p class="text-sm text-gray-600 line-clamp-3 mb-6 leading-relaxed">{a.ringkasan}</p>
+              <span class="mt-auto text-sm font-bold text-brand-red flex items-center gap-2">Baca Selengkapnya <i class="fa-solid fa-arrow-right text-xs"></i></span>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <p id="empty-state" class="hidden text-center text-gray-500 py-16">Belum ada artikel di kategori ini.</p>
+    </div>
+  </main>
+
+</BaseLayout>
+
+<script>
+  const buttons = document.querySelectorAll('.filter-btn')
+  const cards = document.querySelectorAll('.artikel-card')
+  const emptyState = document.getElementById('empty-state')
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const kategori = btn.getAttribute('data-kategori')
+      buttons.forEach((b) => b.classList.remove('bg-brand-red', 'text-white'))
+      buttons.forEach((b) => b.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200'))
+      btn.classList.add('bg-brand-red', 'text-white')
+      btn.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200')
+
+      let visibleCount = 0
+      cards.forEach((card) => {
+        const match = kategori === 'semua' || card.getAttribute('data-kategori') === kategori
+        card.classList.toggle('hidden', !match)
+        if (match) visibleCount++
+      })
+      emptyState?.classList.toggle('hidden', visibleCount > 0)
+    })
+  })
+</script>

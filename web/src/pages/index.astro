@@ -1,11 +1,153 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PackageCard from '../components/PackageCard.astro'
+import TestimonialCard from '../components/TestimonialCard.astro'
+import FaqAccordion from '../components/FaqAccordion.astro'
+import Lightbox from '../components/Lightbox.astro'
+import { client, urlFor } from '../lib/sanity'
+import { homepageQuery, testimoniTerbaruQuery } from '../lib/queries'
+
+const home = await client.fetch(homepageQuery)
+
+const testimoni = home?.testimoniDitampilkan?.length
+  ? home.testimoniDitampilkan
+  : await client.fetch(testimoniTerbaruQuery)
 ---
 
-<Layout title="Beranda | Jeep Kemuning">
-  <section class="relative w-full h-[100svh] flex flex-col justify-center items-center bg-brand-dark pt-20">
-    <h1 class="font-heading text-5xl md:text-7xl font-bold text-white">
-      Scaffold Astro <span class="text-brand-mustard">Siap!</span>
-    </h1>
+<BaseLayout title={home?.seo?.metaTitle || 'Beranda'} description={home?.seo?.metaDescription} ogImage={home?.seo?.ogImage}>
+
+  <!-- Hero -->
+  <section class="relative w-full h-[100svh] flex flex-col justify-center items-center overflow-hidden bg-brand-dark">
+    <div class="absolute inset-0 w-full h-full">
+      {home?.heroSlides?.map((slide: any, i: number) => (
+        <div
+          class="hero-slide absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-1000 ease-in-out"
+          class:list={[i === 0 ? 'opacity-100' : 'opacity-0']}
+          style={`background-image: url('${urlFor(slide).width(1920).url()}')`}
+        ></div>
+      ))}
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-t from-brand-forest/95 via-black/50 to-orange-900/30 z-0"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col justify-center items-center text-center mt-12">
+      <h1 class="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-brand-cream leading-none tracking-tight mb-2 uppercase drop-shadow-xl">
+        {home?.heroJudulUtama} <span class="text-brand-mustard block mt-2">{home?.heroJudulAksen}</span>
+      </h1>
+      {home?.heroBadge && (
+        <div class="bg-brand-red text-white text-sm md:text-base font-bold px-4 py-1.5 mb-8 uppercase tracking-widest shadow-lg transform -rotate-2">
+          {home.heroBadge}
+        </div>
+      )}
+      <p class="text-white/90 text-base md:text-lg max-w-2xl mb-10 leading-relaxed font-medium drop-shadow-md">{home?.heroDeskripsi}</p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+        <a href="#paket-wisata" class="w-full sm:w-auto justify-center bg-brand-red hover:bg-red-800 text-white font-bold px-8 py-3.5 rounded-md flex items-center gap-2 transition-transform hover:scale-105 shadow-lg">
+          <i class="fa-solid fa-compass"></i> Pilih Paket Wisata
+        </a>
+      </div>
+    </div>
   </section>
-</Layout>
+
+  <!-- Keunggulan -->
+  <section class="w-full py-20 bg-brand-cream relative z-10">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col items-center mb-16 text-center">
+        <h3 class="text-brand-forest font-bold text-xs md:text-sm tracking-wider uppercase mb-2">{home?.keunggulanKicker}</h3>
+        <p class="text-gray-600 max-w-3xl mx-auto text-sm md:text-base leading-relaxed">{home?.keunggulanDeskripsi}</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {home?.keunggulanItems?.map((item: any) => (
+          <div class="bg-white border border-gray-100 rounded-xl p-6 md:p-8 shadow-sm flex flex-col items-center text-center transition-transform hover:-translate-y-1 duration-300">
+            <div class="w-16 h-16 bg-brand-forest/5 rounded-lg flex items-center justify-center mb-6 text-brand-red shrink-0 text-3xl">
+              <i class={`fa-solid fa-${item.icon}`}></i>
+            </div>
+            <h4 class="font-bold text-lg text-brand-forest mb-3">{item.judul}</h4>
+            <p class="text-sm text-gray-600 leading-relaxed">{item.deskripsi}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Paket Wisata -->
+  <section id="paket-wisata" class="w-full py-24 bg-brand-forest relative z-10 border-t-8 border-brand-red">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col items-center mb-16 text-center">
+        <h2 class="font-heading text-4xl lg:text-5xl font-bold text-white mb-4 uppercase tracking-wide">
+          PILIH <span class="text-brand-mustard">PETUALANGAN</span>
+        </h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {home?.paketDitampilkan?.map((paket: any) => <PackageCard {...paket} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimoni -->
+  {testimoni?.length > 0 && (
+    <section class="w-full py-24 bg-white relative z-10">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col items-center mb-14 text-center">
+          <h3 class="text-brand-mustard font-bold text-xs md:text-sm tracking-widest uppercase mb-2">Kata Mereka</h3>
+          <h2 class="font-heading text-4xl lg:text-5xl font-bold text-brand-forest uppercase tracking-wide">
+            Testimoni <span class="text-brand-mustard">Pelanggan</span>
+          </h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {testimoni.map((t: any) => <TestimonialCard {...t} />)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Galeri -->
+  {home?.galeriHome?.length > 0 && (
+    <section class="w-full py-24 bg-brand-cream relative z-10 border-t border-gray-100">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col items-center mb-12 text-center">
+          <h2 class="font-heading text-4xl lg:text-5xl font-bold text-brand-forest uppercase tracking-wide">
+            Galeri <span class="text-brand-mustard">Petualangan</span>
+          </h2>
+        </div>
+        <Lightbox images={home.galeriHome} />
+      </div>
+    </section>
+  )}
+
+  <!-- FAQ -->
+  {home?.faq?.length > 0 && (
+    <section class="w-full py-24 bg-white relative z-10 overflow-hidden border-t border-gray-200">
+      <div class="max-w-4xl mx-auto px-6 relative">
+        <div class="text-center mb-12">
+          <h2 class="font-heading text-3xl md:text-4xl font-bold text-brand-forest uppercase">Ada Pertanyaan?</h2>
+        </div>
+        <FaqAccordion items={home.faq} />
+      </div>
+    </section>
+  )}
+
+  <!-- CTA Bawah -->
+  <div class="w-full relative bg-brand-forest mt-10 border-t-8 border-brand-mustard">
+    <section class="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-12 flex flex-col md:flex-row items-center justify-between gap-12">
+      <div class="w-full md:w-1/2 text-white">
+        <h2 class="font-heading text-4xl md:text-5xl font-bold mb-4 leading-tight uppercase tracking-wide">
+          {home?.ctaSubjudul && <span class="text-brand-mustard block text-2xl md:text-3xl mb-2 tracking-widest">{home.ctaSubjudul}</span>}
+          {home?.ctaJudul}
+        </h2>
+        <p class="text-white/80 text-sm md:text-base mb-8 max-w-lg leading-relaxed font-medium">{home?.ctaDeskripsi}</p>
+      </div>
+    </section>
+  </div>
+
+</BaseLayout>
+
+<script>
+  const slides = document.querySelectorAll('.hero-slide')
+  let current = 0
+  if (slides.length > 1) {
+    setInterval(() => {
+      slides[current].classList.replace('opacity-100', 'opacity-0')
+      current = (current + 1) % slides.length
+      slides[current].classList.replace('opacity-0', 'opacity-100')
+    }, 5000)
+  }
+</script>

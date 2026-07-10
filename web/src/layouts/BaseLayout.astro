@@ -1,0 +1,48 @@
+---
+import '../styles/global.css' // <-- Wajib dipanggil untuk mengaktifkan Tailwind v4
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+import { client, urlFor } from '../lib/sanity'
+import { siteSettingsQuery } from '../lib/queries'
+
+interface Props {
+  title: string
+  description?: string
+  ogImage?: any
+}
+
+const { title, description, ogImage } = Astro.props
+// Tarik data secara dinamis (SSR)
+const siteSettings = await client.fetch(siteSettingsQuery)
+
+const metaTitle = title ? `${title} - ${siteSettings?.namaBisnis || 'Jeep Kemuning'}` : siteSettings?.namaBisnis
+const metaDescription = description || siteSettings?.seoDefault?.metaDescription || ''
+const metaImage = ogImage ? urlFor(ogImage).width(1200).height(630).url() : undefined
+---
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{metaTitle}</title>
+  <meta name="description" content={metaDescription} />
+  {metaImage && <meta property="og:image" content={metaImage} />}
+  <meta property="og:title" content={metaTitle} />
+  <meta property="og:description" content={metaDescription} />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&family=Oswald:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+</head>
+<body class="antialiased bg-brand-cream text-gray-800 relative overflow-x-hidden">
+  <Header siteSettings={siteSettings} />
+  
+  <slot />
+  
+  <Footer siteSettings={siteSettings} />
+</body>
+</html>

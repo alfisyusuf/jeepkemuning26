@@ -1,0 +1,67 @@
+---
+import { urlFor } from '../lib/sanity'
+
+const { siteSettings } = Astro.props
+
+function resolveHref(item: any) {
+  switch (item.tujuan) {
+    case 'beranda': return '/'
+    case 'paket': return item.paketSlug ? `/paket-wisata/${item.paketSlug}` : '#'
+    case 'artikel': return '/artikel'
+    case 'halaman': return item.halamanSlug ? `/${item.halamanSlug}` : '#'
+    case 'manual': return item.urlManual || '#'
+    default: return '#'
+  }
+}
+
+const waLink = siteSettings?.whatsapp ? `https://wa.me/${siteSettings.whatsapp}` : '#'
+---
+
+<header class="absolute top-0 w-full z-50 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-6 py-2.5 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-3 flex-shrink-0 z-50">
+      {siteSettings?.logo && (
+        <img src={urlFor(siteSettings.logo).width(96).url()} alt={`Logo ${siteSettings.namaBisnis}`} class="h-10 md:h-12 w-auto drop-shadow-sm" />
+      )}
+      <div class="font-heading font-bold text-xl md:text-2xl tracking-tight uppercase hidden lg:block">
+        {siteSettings?.namaBisnis}
+      </div>
+    </a>
+
+    <nav class="hidden lg:flex flex-1 justify-center items-center gap-6 text-sm font-semibold text-gray-700">
+      {siteSettings?.navMenu?.map((item: any) => (
+        <a href={resolveHref(item)} class="hover:text-brand-red transition-colors">{item.label}</a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-4 flex-shrink-0">
+      <a href={waLink} target="_blank" class="hidden lg:flex items-center gap-2 bg-brand-red text-white px-5 py-2.5 rounded-md text-sm font-bold hover:bg-red-800 transition-colors shadow-md">
+        <i class="fa-solid fa-phone"></i> Hubungi Kami
+      </a>
+      <button id="mobile-menu-btn" class="lg:hidden z-50 text-brand-forest focus:outline-none p-1">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div id="mobile-menu" class="fixed inset-0 bg-white z-40 transform translate-x-full transition-transform duration-300 ease-in-out lg:hidden flex flex-col px-6 pb-8 pt-24 overflow-y-auto">
+  <nav class="flex flex-col gap-6 text-lg font-semibold text-brand-forest items-center">
+    {siteSettings?.navMenu?.map((item: any) => (
+      <a href={resolveHref(item)} class="hover:text-brand-red">{item.label}</a>
+    ))}
+  </nav>
+  <a href={waLink} target="_blank" class="mt-auto mb-4 flex items-center justify-center gap-2 bg-brand-red hover:bg-red-800 text-white w-full py-4 rounded-md text-base font-bold transition-colors shadow-md">
+    <i class="fa-solid fa-phone"></i> Hubungi Kami
+  </a>
+</div>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn')
+  const menu = document.getElementById('mobile-menu')
+  btn?.addEventListener('click', () => {
+    menu?.classList.toggle('translate-x-full')
+  })
+</script>
