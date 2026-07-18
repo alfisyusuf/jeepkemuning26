@@ -4,10 +4,10 @@ import PortableText from '../components/PortableText.astro'
 import { client, urlFor } from '../lib/sanity'
 import { semuaHalamanSlugQuery, halamanBySlugQuery } from '../lib/queries'
 
-// Slug yang sudah dipakai route lain, tidak boleh bentrok dengan "halaman"
-const RESERVED_SLUGS = ['paket-wisata', 'artikel', '404']
-
 export async function getStaticPaths() {
+  // Pindahkan variabel RESERVED_SLUGS ke dalam sini
+  const RESERVED_SLUGS = ['paket-wisata', 'artikel', '404']
+
   const slugs = await client.fetch(semuaHalamanSlugQuery)
   return slugs
     .filter((item: { slug: string }) => !RESERVED_SLUGS.includes(item.slug))
