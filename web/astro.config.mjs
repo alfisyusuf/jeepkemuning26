@@ -15,8 +15,7 @@ export default defineConfig({
     sanity({
       projectId: 'mgy2soqp',
       dataset: 'production',
-      useCdn: false, // Wajib 'false' untuk statis agar selalu menarik data paling baru saat di-build
-      studioBasePath: '/admin',
+      useCdn: false,
     })
   ]
 });
