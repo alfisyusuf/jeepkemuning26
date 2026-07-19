@@ -5,7 +5,7 @@ const { siteSettings } = Astro.props
 const waLink = siteSettings?.whatsapp ? `https://wa.me/${siteSettings.whatsapp}` : '#'
 const waDisplay = siteSettings?.whatsapp?.replace(/^62/, '0').replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')
 
-// Logika pemisahan 2 warna untuk nama bisnis (sama seperti Header)
+// Logika pemisahan 2 warna untuk nama bisnis
 const namaBisnis = siteSettings?.namaBisnis || 'Jeep Kemuning'
 const kataArr = namaBisnis.split(' ')
 const kataPertama = kataArr[0]
@@ -44,9 +44,15 @@ function resolveHref(item: any) {
         <p>Email:<br /><a href={`mailto:${siteSettings?.email}`} class="hover:text-brand-mustard transition-colors">{siteSettings?.email}</a></p>
       </div>
       {siteSettings?.instagramUrl && (
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 mb-4">
           <i class="fa-brands fa-instagram text-lg"></i>
           <p>Instagram:<br /><a href={siteSettings.instagramUrl} target="_blank" class="hover:text-brand-mustard transition-colors">{siteSettings?.instagramHandle || '@jeepkemuning'}</a></p>
+        </div>
+      )}
+      {siteSettings?.facebookUrl && (
+        <div class="flex items-center gap-3">
+          <i class="fa-brands fa-facebook text-lg"></i>
+          <p>Facebook:<br /><a href={siteSettings.facebookUrl} target="_blank" class="hover:text-brand-mustard transition-colors">{siteSettings?.facebookHandle || 'Jeep Kemuning'}</a></p>
         </div>
       )}
     </div>
@@ -65,9 +71,9 @@ function resolveHref(item: any) {
         {siteSettings?.logo && (
           <img src={urlFor(siteSettings.logo).width(120).url()} alt="Logo" class="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity mb-2" />
         )}
-        <!-- Teks dengan 2 warna & rapat seperti di navbar -->
+        <!-- Teks dengan 2 warna & rapat: Kata pertama putih agar kontras dengan background gelap -->
         <div class="font-heading font-bold text-3xl tracking-tight uppercase">
-          <span class="text-brand-forest">{kataPertama}</span>{kataSisa && <span class="text-brand-mustard">{kataSisa}</span>}
+          <span class="text-white">{kataPertama}</span>{kataSisa && <span class="text-brand-mustard">{kataSisa}</span>}
         </div>
       </a>
       <p class="text-brand-cream/60 mt-1">{siteSettings?.tagline}</p>

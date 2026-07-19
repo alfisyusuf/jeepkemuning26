@@ -16,14 +16,21 @@ export default defineType({
       validation: (r) => r.required().regex(/^628\d{7,12}$/, {name: 'format WA', invert: false}).warning('Gunakan format 628... tanpa spasi'),
     }),
     defineField({name: 'email', title: 'Email', type: 'string'}),
+    defineField({name: 'alamat', title: 'Alamat Basecamp', type: 'text', rows: 3}),
     defineField({name: 'instagramUrl', title: 'Link Instagram', type: 'url'}),
     defineField({
       name: 'instagramHandle', 
       title: 'Username Instagram', 
       type: 'string',
-      description: 'Teks yang akan tampil di footer (contoh: @jeepkemuning)'
+      description: 'Teks yang tampil di footer (contoh: @jeepkemuning)'
     }),
     defineField({name: 'facebookUrl', title: 'Link Facebook', type: 'url'}),
+    defineField({
+      name: 'facebookHandle', 
+      title: 'Nama Akun Facebook', 
+      type: 'string',
+      description: 'Teks yang tampil di footer (contoh: Jeep Kemuning Adventure)'
+    }),
     defineField({
       name: 'navMenu',
       title: 'Menu Navigasi Utama',
