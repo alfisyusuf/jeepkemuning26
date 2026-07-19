@@ -179,9 +179,8 @@ const testimoni = home?.testimoniDitampilkan?.length
 
   if (slides.length > 1) {
     const updateSlider = (newIndex: number) => {
-      // Sembunyikan slide aktif saat ini
+      // Sembunyikan slide aktif
       slides[current].classList.replace('opacity-100', 'opacity-0')
-      slides[current].classList.replace('z-10', 'z-0')
       if (dots.length) {
         dots[current].classList.replace('bg-brand-mustard', 'bg-white/50')
         dots[current].classList.replace('w-8', 'w-3')
@@ -192,7 +191,6 @@ const testimoni = home?.testimoniDitampilkan?.length
       
       // Tampilkan slide baru
       slides[current].classList.replace('opacity-0', 'opacity-100')
-      slides[current].classList.replace('z-0', 'z-10')
       if (dots.length) {
         dots[current].classList.replace('bg-white/50', 'bg-brand-mustard')
         dots[current].classList.replace('w-3', 'w-8')
@@ -203,17 +201,14 @@ const testimoni = home?.testimoniDitampilkan?.length
     const nextSlide = () => updateSlider((current + 1) % slides.length)
     const prevSlide = () => updateSlider((current - 1 + slides.length) % slides.length)
 
-    // Fungsi untuk mereset interval agar tidak langsung bergeser setelah diklik manual
     const startInterval = () => {
       clearInterval(slideInterval)
       slideInterval = window.setInterval(nextSlide, 5000)
     }
 
-    // Event Listener untuk Tombol Prev/Next
     if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); startInterval(); })
     if (prevBtn) prevBtn.addEventListener('click', () => { prevSlide(); startInterval(); })
 
-    // Event Listener untuk Titik Indikator
     dots.forEach((dot, index) => {
       dot.addEventListener('click', () => {
         if (current !== index) {
@@ -223,7 +218,6 @@ const testimoni = home?.testimoniDitampilkan?.length
       })
     })
 
-    // Mulai putaran otomatis pertama
     startInterval()
   }
 </script>
