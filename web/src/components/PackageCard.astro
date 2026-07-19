@@ -6,6 +6,7 @@ interface Props {
   slug: string
   ringkasanKartu?: string
   fotoKartu?: any
+  // Nanti kita bisa tambahkan array 'fiturSingkat' jika Anda mau update schema paketWisata.ts
 }
 
 const { nama, slug, ringkasanKartu, fotoKartu } = Astro.props
@@ -16,12 +17,33 @@ const { nama, slug, ringkasanKartu, fotoKartu } = Astro.props
     {fotoKartu && <img src={urlFor(fotoKartu).width(600).height(450).url()} alt={nama} class="w-full h-full object-cover" />}
   </div>
   <div class="p-8 pt-8 flex-1 flex flex-col">
+    <!-- Pita Kuning Miring -->
     <div class="bg-brand-mustard text-brand-forest font-heading font-bold text-xl uppercase px-4 py-2 text-center -mt-14 mb-6 relative z-10 mx-auto shadow-md transform -skew-x-3 w-max">
       {nama}
     </div>
-    <p class="text-sm text-gray-700 mb-6 leading-relaxed font-medium flex-1">{ringkasanKartu}</p>
+    
+    <p class="text-sm text-gray-700 mb-6 leading-relaxed font-medium">
+      {ringkasanKartu}
+    </p>
+    
+    <!-- Area Poin-Poin (Sementara statis, nanti bisa dibuat dinamis menarik data Sanity) -->
+    <ul class="flex flex-col gap-3 mb-8 flex-1">
+      <li class="flex items-start gap-3 text-sm text-gray-800 font-medium">
+        <i class="fa-solid fa-circle-check text-brand-red mt-0.5"></i>
+        Pemandu & Fasilitator Ramah
+      </li>
+      <li class="flex items-start gap-3 text-sm text-gray-800 font-medium">
+        <i class="fa-solid fa-circle-check text-brand-red mt-0.5"></i>
+        Fasilitas Aman & Nyaman
+      </li>
+      <li class="flex items-start gap-3 text-sm text-gray-800 font-medium">
+        <i class="fa-solid fa-circle-check text-brand-red mt-0.5"></i>
+        Harga Terbaik
+      </li>
+    </ul>
+
     <a href={`/paket-wisata/${slug}`} class="mt-auto w-full py-3.5 bg-brand-forest hover:bg-brand-green text-white rounded-md font-bold text-sm flex items-center justify-center gap-2 transition-colors">
-      Lihat Detail {nama} <i class="fa-solid fa-arrow-right"></i>
+      Detail {nama} <i class="fa-solid fa-arrow-right"></i>
     </a>
   </div>
 </div>

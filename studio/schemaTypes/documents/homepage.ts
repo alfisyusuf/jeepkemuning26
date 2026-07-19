@@ -34,10 +34,14 @@ export default defineType({
     }),
 
     // PAKET WISATA DI HOME
+    defineField({name: 'paketKicker', title: 'Label Kecil (Kicker)', type: 'string', initialValue: 'Satu Tujuan, Jutaan Kenangan', group: 'paket'}),
+    defineField({name: 'paketJudulUtama', title: 'Judul Utama', type: 'string', initialValue: 'PILIH', group: 'paket'}),
+    defineField({name: 'paketJudulAksen', title: 'Judul Aksen Berwarna', type: 'string', initialValue: 'PETUALANGAN', group: 'paket'}),
+    defineField({name: 'paketDeskripsi', title: 'Deskripsi Singkat', type: 'text', rows: 2, group: 'paket'}),
     defineField({
       name: 'paketDitampilkan',
       title: 'Paket yang Ditampilkan di Beranda',
-      description: 'Pilih & urutkan paket wisata yang ingin ditonjolkan di halaman depan',
+      description: 'Pilih & urutkan paket wisata. (Saran: Gunakan 3 atau 6 paket agar rata. Jika lebih dari 3, tombol "Lihat Semua" akan muncul).',
       type: 'array',
       of: [{type: 'reference', to: [{type: 'paketWisata'}]}],
       group: 'paket',
