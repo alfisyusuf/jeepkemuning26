@@ -32,7 +32,8 @@ const kataSisa = kataArr.slice(1).join(' ')
       {siteSettings?.logo && (
         <img src={urlFor(siteSettings.logo).width(96).url()} alt={`Logo ${siteSettings.namaBisnis}`} class="h-10 md:h-12 w-auto drop-shadow-sm" />
       )}
-      <div class="font-heading font-bold text-xl md:text-2xl tracking-tight uppercase hidden lg:block">
+      <!-- Class 'hidden lg:block' dihapus agar tampil di mobile, ukuran teks disesuaikan -->
+      <div class="font-heading font-bold text-lg md:text-2xl tracking-tight uppercase">
         <span class="text-brand-forest">{kataPertama}</span>
         {kataSisa && <span class="text-brand-mustard">{kataSisa}</span>}
       </div>
