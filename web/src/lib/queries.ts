@@ -4,7 +4,7 @@ const paketCardFragment = `_id, nama, "slug": slug.current, ringkasanKartu, foto
 const testimoniFragment = `_id, namaPelanggan, asalInstansi, foto, rating, isiTestimoni, tanggal`
 
 export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
-  namaBisnis, tagline, logo, whatsapp, email, alamat, instagramUrl, facebookUrl,
+  namaBisnis, tagline, logo, whatsapp, email, alamat, instagramUrl, instagramHandle, facebookUrl, facebookHandle,
   navMenu[]{
     label, tujuan, urlManual,
     "paketSlug": paketRef->slug.current,
