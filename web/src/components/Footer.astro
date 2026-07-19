@@ -4,6 +4,24 @@ import { urlFor } from '../lib/sanity'
 const { siteSettings } = Astro.props
 const waLink = siteSettings?.whatsapp ? `https://wa.me/${siteSettings.whatsapp}` : '#'
 const waDisplay = siteSettings?.whatsapp?.replace(/^62/, '0').replace(/(\d{4})(\d{4})(\d+)/, '$1-$2-$3')
+
+// Logika pemisahan 2 warna untuk nama bisnis (sama seperti Header)
+const namaBisnis = siteSettings?.namaBisnis || 'Jeep Kemuning'
+const kataArr = namaBisnis.split(' ')
+const kataPertama = kataArr[0]
+const kataSisa = kataArr.slice(1).join(' ')
+
+// Fungsi agar tautan singkat bekerja dengan benar
+function resolveHref(item: any) {
+  switch (item.tujuan) {
+    case 'beranda': return '/'
+    case 'paket': return item.paketSlug ? `/paket-wisata/${item.paketSlug}` : '#'
+    case 'artikel': return '/artikel'
+    case 'halaman': return item.halamanSlug ? `/${item.halamanSlug}` : '#'
+    case 'manual': return item.urlManual || '#'
+    default: return '#'
+  }
+}
 ---
 
 <footer class="relative z-10 w-full px-6 py-12 text-brand-cream/80 text-sm bg-brand-dark border-t-8 border-brand-mustard">
@@ -28,7 +46,7 @@ const waDisplay = siteSettings?.whatsapp?.replace(/^62/, '0').replace(/(\d{4})(\
       {siteSettings?.instagramUrl && (
         <div class="flex items-center gap-3">
           <i class="fa-brands fa-instagram text-lg"></i>
-          <p>Instagram:<br /><a href={siteSettings.instagramUrl} target="_blank" class="hover:text-brand-mustard transition-colors">@{siteSettings.namaBisnis}</a></p>
+          <p>Instagram:<br /><a href={siteSettings.instagramUrl} target="_blank" class="hover:text-brand-mustard transition-colors">{siteSettings?.instagramHandle || '@jeepkemuning'}</a></p>
         </div>
       )}
     </div>
@@ -37,7 +55,7 @@ const waDisplay = siteSettings?.whatsapp?.replace(/^62/, '0').replace(/(\d{4})(\
       <h4 class="font-bold text-white mb-4 uppercase tracking-wider">Tautan Singkat</h4>
       <ul class="flex flex-col gap-2">
         {siteSettings?.navMenu?.slice(0, 5).map((item: any) => (
-          <li><a href="#" class="hover:text-brand-mustard transition-colors">{item.label}</a></li>
+          <li><a href={resolveHref(item)} class="hover:text-brand-mustard transition-colors">{item.label}</a></li>
         ))}
       </ul>
     </div>
@@ -47,7 +65,10 @@ const waDisplay = siteSettings?.whatsapp?.replace(/^62/, '0').replace(/(\d{4})(\
         {siteSettings?.logo && (
           <img src={urlFor(siteSettings.logo).width(120).url()} alt="Logo" class="h-16 w-auto opacity-90 hover:opacity-100 transition-opacity mb-2" />
         )}
-        <div class="font-heading font-bold text-3xl tracking-tight uppercase text-white">{siteSettings?.namaBisnis}</div>
+        <!-- Teks dengan 2 warna & rapat seperti di navbar -->
+        <div class="font-heading font-bold text-3xl tracking-tight uppercase">
+          <span class="text-brand-forest">{kataPertama}</span>{kataSisa && <span class="text-brand-mustard">{kataSisa}</span>}
+        </div>
       </a>
       <p class="text-brand-cream/60 mt-1">{siteSettings?.tagline}</p>
     </div>
