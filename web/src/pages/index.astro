@@ -17,12 +17,12 @@ const testimoni = home?.testimoniDitampilkan?.length
 <BaseLayout title={home?.seo?.metaTitle || 'Beranda'} description={home?.seo?.metaDescription} ogImage={home?.seo?.ogImage}>
 
   <!-- Hero -->
-  <section class="relative w-full h-[100svh] flex flex-col justify-center items-center overflow-hidden bg-brand-dark">
-    <div class="absolute inset-0 w-full h-full">
+  <section class="relative w-full h-[100svh] flex flex-col justify-center items-center overflow-hidden bg-brand-dark group">
+    <div class="absolute inset-0 w-full h-full" id="hero-slides-container">
       {home?.heroSlides?.map((slide: any, i: number) => (
         <div
           class="hero-slide absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-1000 ease-in-out"
-          class:list={[i === 0 ? 'opacity-100' : 'opacity-0']}
+          class:list={[i === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0']}
           style={`background-image: url('${urlFor(slide).width(1920).url()}')`}
         ></div>
       ))}
@@ -43,8 +43,33 @@ const testimoni = home?.testimoniDitampilkan?.length
         <a href="#paket-wisata" class="w-full sm:w-auto justify-center bg-brand-red hover:bg-red-800 text-white font-bold px-8 py-3.5 rounded-md flex items-center gap-2 transition-transform hover:scale-105 shadow-lg">
           <i class="fa-solid fa-compass"></i> Pilih Paket Wisata
         </a>
+        <!-- Tombol WA (opsional, dikembalikan seperti desain statis) -->
+        <a href="https://wa.me/628561304343" target="_blank" class="w-full sm:w-auto justify-center bg-brand-mustard hover:bg-yellow-500 text-brand-forest font-bold px-8 py-3.5 rounded-md flex items-center gap-2 transition-transform hover:scale-105 shadow-lg">
+          <i class="fa-brands fa-whatsapp text-lg"></i> Hubungi Admin
+        </a>
       </div>
     </div>
+
+    <!-- Navigasi Slider (Hanya muncul jika slide > 1) -->
+    {home?.heroSlides?.length > 1 && (
+      <>
+        <button id="prevSlideBtn" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-black/30 text-white/70 hover:bg-black/60 hover:text-white transition-all backdrop-blur-sm hidden md:flex">
+          <i class="fa-solid fa-chevron-left text-xl"></i>
+        </button>
+        <button id="nextSlideBtn" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-black/30 text-white/70 hover:bg-black/60 hover:text-white transition-all backdrop-blur-sm hidden md:flex">
+          <i class="fa-solid fa-chevron-right text-xl"></i>
+        </button>
+
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3" id="slide-indicators">
+          {home.heroSlides.map((_: any, i: number) => (
+            <button 
+              class={`slide-dot h-3 rounded-full transition-all duration-300 ${i === 0 ? 'bg-brand-mustard w-8' : 'bg-white/50 w-3 hover:bg-white'}`}
+              aria-label={`Slide ${i + 1}`}
+            ></button>
+          ))}
+        </div>
+      </>
+    )}
   </section>
 
   <!-- Keunggulan -->
@@ -142,12 +167,60 @@ const testimoni = home?.testimoniDitampilkan?.length
 
 <script>
   const slides = document.querySelectorAll('.hero-slide')
+  const dots = document.querySelectorAll('.slide-dot')
+  const prevBtn = document.getElementById('prevSlideBtn')
+  const nextBtn = document.getElementById('nextSlideBtn')
+  
   let current = 0
+  let slideInterval: number | undefined
+
   if (slides.length > 1) {
-    setInterval(() => {
+    const updateSlider = (newIndex: number) => {
+      // Sembunyikan slide aktif saat ini
       slides[current].classList.replace('opacity-100', 'opacity-0')
-      current = (current + 1) % slides.length
+      slides[current].classList.replace('z-10', 'z-0')
+      if (dots.length) {
+        dots[current].classList.replace('bg-brand-mustard', 'bg-white/50')
+        dots[current].classList.replace('w-8', 'w-3')
+        dots[current].classList.add('hover:bg-white')
+      }
+      
+      current = newIndex
+      
+      // Tampilkan slide baru
       slides[current].classList.replace('opacity-0', 'opacity-100')
-    }, 5000)
+      slides[current].classList.replace('z-0', 'z-10')
+      if (dots.length) {
+        dots[current].classList.replace('bg-white/50', 'bg-brand-mustard')
+        dots[current].classList.replace('w-3', 'w-8')
+        dots[current].classList.remove('hover:bg-white')
+      }
+    }
+
+    const nextSlide = () => updateSlider((current + 1) % slides.length)
+    const prevSlide = () => updateSlider((current - 1 + slides.length) % slides.length)
+
+    // Fungsi untuk mereset interval agar tidak langsung bergeser setelah diklik manual
+    const startInterval = () => {
+      clearInterval(slideInterval)
+      slideInterval = window.setInterval(nextSlide, 5000)
+    }
+
+    // Event Listener untuk Tombol Prev/Next
+    if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); startInterval(); })
+    if (prevBtn) prevBtn.addEventListener('click', () => { prevSlide(); startInterval(); })
+
+    // Event Listener untuk Titik Indikator
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        if (current !== index) {
+          updateSlider(index)
+          startInterval()
+        }
+      })
+    })
+
+    // Mulai putaran otomatis pertama
+    startInterval()
   }
 </script>
