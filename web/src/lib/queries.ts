@@ -15,7 +15,7 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
 
 export const homepageQuery = `*[_type == "homepage"][0]{
   heroSlides, heroJudulUtama, heroJudulAksen, heroBadge, heroDeskripsi,
-  keunggulanKicker, keunggulanDeskripsi, keunggulanItems,
+  keunggulanKicker, keunggulanJudulUtama, keunggulanJudulAksen, keunggulanDeskripsi, keunggulanItems,
   "paketDitampilkan": paketDitampilkan[]->{${paketCardFragment}},
   "testimoniDitampilkan": testimoniDitampilkan[]->{${testimoniFragment}},
   galeriHome,

@@ -80,13 +80,22 @@ const testimoni = home?.testimoniDitampilkan?.length
     <div class="max-w-7xl mx-auto px-6">
       <div class="flex flex-col items-center mb-16 text-center">
         <h3 class="text-brand-forest font-bold text-xs md:text-sm tracking-wider uppercase mb-2">{home?.keunggulanKicker}</h3>
+        
+        {home?.keunggulanJudulUtama && (
+          <h2 class="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-brand-forest mb-6 uppercase">
+            {home.keunggulanJudulUtama}<span class="text-brand-mustard">{home?.keunggulanJudulAksen}</span>
+          </h2>
+        )}
+        
         <p class="text-gray-600 max-w-3xl mx-auto text-sm md:text-base leading-relaxed">{home?.keunggulanDeskripsi}</p>
       </div>
+      
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {home?.keunggulanItems?.map((item: any) => (
           <div class="bg-white border border-gray-100 rounded-xl p-6 md:p-8 shadow-sm flex flex-col items-center text-center transition-transform hover:-translate-y-1 duration-300">
-            <div class="w-16 h-16 bg-brand-forest/5 rounded-lg flex items-center justify-center mb-6 text-brand-red shrink-0 text-3xl">
-              <i class={`fa-solid fa-${item.icon}`}></i>
+            <!-- Warna dikendalikan via item.warnaIcon, dan perbaikan penulisan class icon -->
+            <div class={`w-16 h-16 bg-brand-forest/5 rounded-lg flex items-center justify-center mb-6 shrink-0 text-3xl ${item.warnaIcon || 'text-brand-red'}`}>
+              <i class={`fa-solid ${item.icon}`}></i>
             </div>
             <h4 class="font-bold text-lg text-brand-forest mb-3">{item.judul}</h4>
             <p class="text-sm text-gray-600 leading-relaxed">{item.deskripsi}</p>

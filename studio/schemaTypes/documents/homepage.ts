@@ -24,6 +24,8 @@ export default defineType({
 
     // KEUNGGULAN
     defineField({name: 'keunggulanKicker', title: 'Label Kecil', type: 'string', initialValue: 'Kenapa Liburanmu Lebih Seru Bersama', group: 'keunggulan'}),
+    defineField({name: 'keunggulanJudulUtama', title: 'Judul Utama (contoh: Jeep Kemuning)', type: 'string', group: 'keunggulan'}),
+    defineField({name: 'keunggulanJudulAksen', title: 'Judul Aksen Berwarna (contoh: ?)', type: 'string', group: 'keunggulan'}),
     defineField({name: 'keunggulanDeskripsi', title: 'Deskripsi Section', type: 'text', rows: 3, group: 'keunggulan'}),
     defineField({
       name: 'keunggulanItems', title: 'Kartu Keunggulan (idealnya 4)', type: 'array',
