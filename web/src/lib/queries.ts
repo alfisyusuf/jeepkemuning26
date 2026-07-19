@@ -1,6 +1,6 @@
 // Fragment yang dipakai berulang
 const seoFragment = `seo{metaTitle, metaDescription, ogImage}`
-const paketCardFragment = `_id, nama, "slug": slug.current, ringkasanKartu, fotoKartu`
+const paketCardFragment = `_id, nama, "slug": slug.current, ringkasanKartu, fotoKartu, fiturSingkat`
 const testimoniFragment = `_id, namaPelanggan, asalInstansi, foto, rating, isiTestimoni, tanggal`
 
 export const siteSettingsQuery = `*[_type == "siteSettings"][0]{

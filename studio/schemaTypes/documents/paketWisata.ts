@@ -31,7 +31,14 @@ export default defineType({
     defineField({name: 'urutanMenu', title: 'Urutan di Menu (angka kecil tampil duluan)', type: 'number', group: 'utama'}),
     defineField({name: 'ringkasanKartu', title: 'Ringkasan Singkat (untuk kartu di beranda)', type: 'text', rows: 3, validation: (r) => r.max(200), group: 'utama'}),
     defineField({name: 'fotoKartu', title: 'Foto untuk Kartu di Beranda', type: 'image', options: {hotspot: true}, group: 'utama'}),
-
+    defineField({
+      name: 'fiturSingkat',
+      title: 'Poin-Poin Fitur (Di Kartu Beranda)',
+      description: 'Tambahkan poin-poin ringkas. (Saran: maksimal 3-4 poin agar desain kartu rapi).',
+      type: 'array',
+      of: [{type: 'string'}],
+      group: 'utama',
+    }),
     defineField({name: 'heroKicker', title: 'Label Kecil di Hero', type: 'string', initialValue: 'Layanan Unggulan Kami', group: 'utama'}),
     defineField({name: 'heroSlides', title: 'Foto Hero (bisa lebih dari satu untuk slider)', type: 'array', of: [{type: 'image', options: {hotspot: true}}], group: 'utama'}),
     defineField({name: 'heroDeskripsi', title: 'Deskripsi di Hero', type: 'text', rows: 3, group: 'utama'}),

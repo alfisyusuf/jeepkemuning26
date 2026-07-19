@@ -6,10 +6,10 @@ interface Props {
   slug: string
   ringkasanKartu?: string
   fotoKartu?: any
-  // Nanti kita bisa tambahkan array 'fiturSingkat' jika Anda mau update schema paketWisata.ts
+  fiturSingkat?: string[] // Tambahan tipe data baru
 }
 
-const { nama, slug, ringkasanKartu, fotoKartu } = Astro.props
+const { nama, slug, ringkasanKartu, fotoKartu, fiturSingkat } = Astro.props
 ---
 
 <div class="bg-white rounded-xl shadow-xl overflow-hidden flex flex-col relative transition-transform hover:-translate-y-1 duration-300">
@@ -26,21 +26,20 @@ const { nama, slug, ringkasanKartu, fotoKartu } = Astro.props
       {ringkasanKartu}
     </p>
     
-    <!-- Area Poin-Poin (Sementara statis, nanti bisa dibuat dinamis menarik data Sanity) -->
-    <ul class="flex flex-col gap-3 mb-8 flex-1">
-      <li class="flex items-start gap-3 text-sm text-gray-800 font-medium">
-        <i class="fa-solid fa-circle-check text-brand-red mt-0.5"></i>
-        Pemandu & Fasilitator Ramah
-      </li>
-      <li class="flex items-start gap-3 text-sm text-gray-800 font-medium">
-        <i class="fa-solid fa-circle-check text-brand-red mt-0.5"></i>
-        Fasilitas Aman & Nyaman
-      </li>
-      <li class="flex items-start gap-3 text-sm text-gray-800 font-medium">
-        <i class="fa-solid fa-circle-check text-brand-red mt-0.5"></i>
-        Harga Terbaik
-      </li>
-    </ul>
+    <!-- Render poin-poin jika data fiturSingkat diisi dari Sanity -->
+    {fiturSingkat && fiturSingkat.length > 0 && (
+      <ul class="flex flex-col gap-3 mb-8 flex-1">
+        {fiturSingkat.map((fitur: string) => (
+          <li class="flex items-start gap-3 text-sm text-gray-800 font-medium">
+            <i class="fa-solid fa-circle-check text-brand-red mt-0.5"></i>
+            {fitur}
+          </li>
+        ))}
+      </ul>
+    )}
+    
+    <!-- Fallback ruang kosong jika tidak ada poin fitur agar tombol sejajar di bawah -->
+    {(!fiturSingkat || fiturSingkat.length === 0) && <div class="flex-1"></div>}
 
     <a href={`/paket-wisata/${slug}`} class="mt-auto w-full py-3.5 bg-brand-forest hover:bg-brand-green text-white rounded-md font-bold text-sm flex items-center justify-center gap-2 transition-colors">
       Detail {nama} <i class="fa-solid fa-arrow-right"></i>
