@@ -18,8 +18,10 @@ export const homepageQuery = `*[_type == "homepage"][0]{
   keunggulanKicker, keunggulanJudulUtama, keunggulanJudulAksen, keunggulanDeskripsi, keunggulanItems,
   paketKicker, paketJudulUtama, paketJudulAksen, paketDeskripsi,
   "paketDitampilkan": paketDitampilkan[]->{${paketCardFragment}},
+  testimoniKicker, testimoniJudulUtama, testimoniJudulAksen, testimoniDeskripsi,
   "testimoniDitampilkan": testimoniDitampilkan[]->{${testimoniFragment}},
-  galeriHome,
+  galeriKicker, galeriJudulUtama, galeriJudulAksen, galeriDeskripsi,
+  galeriHome[]{ ..., "videoUrl": asset->url },
   faq,
   ctaJudul, ctaSubjudul, ctaDeskripsi, ctaFotoPolaroid,
   ${seoFragment}

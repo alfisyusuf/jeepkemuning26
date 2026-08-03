@@ -48,6 +48,10 @@ export default defineType({
     }),
 
     // TESTIMONI DI HOME
+    defineField({name: 'testimoniKicker', title: 'Label Kecil', type: 'string', initialValue: 'Kata Mereka', group: 'testimoni'}),
+    defineField({name: 'testimoniJudulUtama', title: 'Judul Utama', type: 'string', initialValue: 'Testimoni', group: 'testimoni'}),
+    defineField({name: 'testimoniJudulAksen', title: 'Judul Aksen Berwarna', type: 'string', initialValue: 'Pelanggan', group: 'testimoni'}),
+    defineField({name: 'testimoniDeskripsi', title: 'Deskripsi Singkat', type: 'text', rows: 2, group: 'testimoni'}),
     defineField({
       name: 'testimoniDitampilkan',
       title: 'Testimoni yang Ditampilkan di Beranda',
@@ -58,11 +62,14 @@ export default defineType({
     }),
 
     // GALERI
+    defineField({name: 'galeriKicker', title: 'Label Kecil', type: 'string', initialValue: 'Momen Tak Terlupakan', group: 'galeri'}),
+    defineField({name: 'galeriJudulUtama', title: 'Judul Utama', type: 'string', initialValue: 'Galeri', group: 'galeri'}),
+    defineField({name: 'galeriJudulAksen', title: 'Judul Aksen Berwarna', type: 'string', initialValue: 'Petualangan', group: 'galeri'}),
+    defineField({name: 'galeriDeskripsi', title: 'Deskripsi Singkat', type: 'text', rows: 2, group: 'galeri'}),
     defineField({
       name: 'galeriHome', 
       title: 'Foto/Video Galeri di Beranda', 
       type: 'array', 
-      // Ubah dari {type: 'image'} menjadi {type: 'galeriItem'}
       of: [{type: 'galeriItem'}], 
       group: 'galeri'
     }),
