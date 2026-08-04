@@ -54,6 +54,10 @@ const { images } = Astro.props
   const lightboxClose = document.getElementById('lightbox-close')
   const lightboxPrev = document.getElementById('lightbox-prev')
   const lightboxNext = document.getElementById('lightbox-next')
+
+  if (lightbox && lightbox.parentElement !== document.body) {
+    document.body.appendChild(lightbox)
+  }
   
   let currentGalleryIndex = 0
 
@@ -85,13 +89,17 @@ const { images } = Astro.props
     currentGalleryIndex = index
     renderLightboxMedia(index)
     lightbox?.classList.remove('opacity-0', 'pointer-events-none')
-    document.body.style.overflow = 'hidden' // Kunci scroll
+
+    document.body.style.overflow = 'hidden' 
+    document.documentElement.style.overflow = 'hidden'
   }
 
   function closeLightbox() {
     lightbox?.classList.add('opacity-0', 'pointer-events-none')
-    if(lightboxContent) lightboxContent.innerHTML = '' // Hapus elemen agar video berhenti
-    document.body.style.overflow = '' // Buka kunci scroll
+    if(lightboxContent) lightboxContent.innerHTML = ''
+
+    document.body.style.overflow = '' 
+    document.documentElement.style.overflow = ''
   }
 
   galleryItems.forEach((item, index) => {
