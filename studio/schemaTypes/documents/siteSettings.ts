@@ -62,6 +62,32 @@ export default defineType({
         },
       ],
     }),
+    defineField({
+      name: 'promo',
+      title: 'Pengaturan Popup Promo',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'aktif', 
+          title: 'Aktifkan Popup Promo?', 
+          type: 'boolean', 
+          initialValue: false,
+          description: 'Nyalakan untuk menampilkan popup, matikan untuk menyembunyikannya dari website.'
+        }),
+        defineField({
+          name: 'gambar', 
+          title: 'Gambar Promo (Rekomendasi: Potret 4:5 atau Kotak 1:1)', 
+          type: 'image', 
+          options: { hotspot: true }
+        }),
+        defineField({
+          name: 'link', 
+          title: 'Link Tujuan (Opsional)', 
+          type: 'string', 
+          description: 'Contoh: /paket-wisata/jeep-adventure atau https://wa.me/62...'
+        }),
+      ]
+    }),
     defineField({name: 'seoDefault', title: 'SEO Default Situs', type: 'seo'}),
   ],
   preview: {

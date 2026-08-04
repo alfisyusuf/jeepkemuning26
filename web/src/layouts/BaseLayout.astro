@@ -51,5 +51,6 @@ const faviconUrl = siteSettings?.logo ? urlFor(siteSettings?.logo).width(64).hei
   <slot />
   
   <Footer siteSettings={siteSettings} />
+  <PopupPromo promoData={siteSettings?.promo} />
 </body>
 </html>

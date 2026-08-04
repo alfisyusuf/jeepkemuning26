@@ -1,0 +1,98 @@
+---
+import { urlFor } from '../lib/sanity'
+
+interface Props {
+  promoData: any
+}
+
+const { promoData } = Astro.props
+
+// Jika promo tidak aktif, atau gambar belum diisi di Sanity, jangan render apapun (komponen dibatalkan)
+if (!promoData?.aktif || !promoData?.gambar) {
+  return null
+}
+
+const promoImageUrl = urlFor(promoData.gambar).width(800).url()
+const promoLink = promoData.link || '#'
+---
+
+<div 
+  id="promo-popup" 
+  class="fixed inset-0 z-[100000] flex items-center justify-center bg-black/80 opacity-0 pointer-events-none transition-opacity duration-500 hidden"
+>
+  <div class="absolute inset-0" id="promo-overlay-close"></div>
+  
+  <div class="relative z-10 w-full max-w-lg mx-4 transform scale-95 transition-transform duration-500" id="promo-content">
+    <button 
+      id="promo-close-btn" 
+      class="absolute -top-4 -right-4 bg-brand-red text-white w-10 h-10 rounded-full flex items-center justify-center text-xl shadow-lg hover:bg-red-800 focus:outline-none transition-colors border-2 border-white z-20"
+      aria-label="Tutup promo"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    
+    <!-- Render <a> jika ada link, atau <div> biasa jika tidak ada link -->
+    {promoLink !== '#' ? (
+      <a href={promoLink} class="block bg-white rounded-xl overflow-hidden shadow-2xl">
+        <img src={promoImageUrl} alt="Promo Spesial" class="w-full max-h-[80vh] object-contain bg-brand-cream" />
+      </a>
+    ) : (
+      <div class="block bg-white rounded-xl overflow-hidden shadow-2xl">
+        <img src={promoImageUrl} alt="Promo Spesial" class="w-full max-h-[80vh] object-contain bg-brand-cream" />
+      </div>
+    )}
+  </div>
+</div>
+
+<script>
+  const popup = document.getElementById('promo-popup')
+  const content = document.getElementById('promo-content')
+  const closeBtn = document.getElementById('promo-close-btn')
+  const overlayClose = document.getElementById('promo-overlay-close')
+  
+  // Waktu cooldown (6 Jam)
+  const COOLDOWN_TIME = 6 * 60 * 60 * 1000 
+
+  function openPromo() {
+    if (!popup || !content) return
+    popup.classList.remove('hidden')
+    setTimeout(() => {
+      popup.classList.remove('opacity-0', 'pointer-events-none')
+      content.classList.remove('scale-95')
+      content.classList.add('scale-100')
+    }, 50)
+  }
+
+  function closePromo() {
+    if (!popup || !content) return
+    popup.classList.add('opacity-0', 'pointer-events-none')
+    content.classList.remove('scale-100')
+    content.classList.add('scale-95')
+    setTimeout(() => { popup.classList.add('hidden') }, 500)
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!popup) return
+    if (popup.parentElement !== document.body) {
+      document.body.appendChild(popup)
+    }
+
+    const lastSeen = localStorage.getItem('jeepPromoLastSeen')
+    const now = new Date().getTime()
+
+    if (!lastSeen || (now - parseInt(lastSeen)) > COOLDOWN_TIME) {
+      setTimeout(() => {
+        openPromo()
+        localStorage.setItem('jeepPromoLastSeen', now.toString())
+      }, 2000) // Muncul 2 detik setelah website dimuat
+    }
+  })
+
+  closeBtn?.addEventListener('click', closePromo)
+  overlayClose?.addEventListener('click', closePromo)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && popup && !popup.classList.contains('hidden')) {
+      closePromo()
+    }
+  })
+</script>

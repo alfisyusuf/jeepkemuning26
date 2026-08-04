@@ -5,6 +5,7 @@ const testimoniFragment = `_id, namaPelanggan, asalInstansi, foto, rating, isiTe
 
 export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   namaBisnis, tagline, logo, whatsapp, email, alamat, instagramUrl, instagramHandle, facebookUrl, facebookHandle,
+  promo,
   navMenu[]{
     label, tujuan, urlManual,
     "paketSlug": paketRef->slug.current,
