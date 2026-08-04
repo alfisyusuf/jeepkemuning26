@@ -54,28 +54,55 @@ const { images } = Astro.props
   const lightboxClose = document.getElementById('lightbox-close')
   const lightboxPrev = document.getElementById('lightbox-prev')
   const lightboxNext = document.getElementById('lightbox-next')
-
+  
+  // Pindahkan modal ke luar dari section dan masukkan langsung ke <body>
   if (lightbox && lightbox.parentElement !== document.body) {
     document.body.appendChild(lightbox)
   }
-  
+
   let currentGalleryIndex = 0
+
+  // Fungsi pintar untuk mengekstrak ID YouTube dari URL
+  function getYouTubeId(url: string) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
+    const match = url.match(regExp)
+    return (match && match[2].length === 11) ? match[2] : null
+  }
 
   function renderLightboxMedia(index: number) {
     if(!lightboxContent) return
     const src = galleryItems[index].getAttribute('data-src') || ''
     const type = galleryItems[index].getAttribute('data-type') || 'image'
     
-    // Matikan media sebelumnya
+    // Matikan media sebelumnya agar suara video terhenti
     lightboxContent.innerHTML = ''
     
-    // Render elemen yang tepat sesuai tipe (video atau image)
-    if (type === 'video') {
+    // Cek apakah URL tersebut adalah link YouTube
+    const ytId = getYouTubeId(src)
+    
+    if (ytId) {
+      // Jika YouTube, suntikkan iframe dengan parameter autoplay=1
+      lightboxContent.innerHTML = `
+        <div class="w-full max-w-5xl aspect-video shadow-2xl rounded-sm transform scale-95 transition-transform duration-300">
+          <iframe 
+            src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen 
+            class="w-full h-full outline-none rounded-sm">
+          </iframe>
+        </div>
+      `
+    } else if (type === 'video') {
+      // Jika video mp4 biasa
       lightboxContent.innerHTML = `<video src="${src}" controls autoplay class="max-w-full max-h-[85vh] shadow-2xl rounded-sm transform scale-95 transition-transform duration-300 outline-none"></video>`
     } else {
+      // Jika gambar
       lightboxContent.innerHTML = `<img src="${src}" alt="Galeri Besar" class="max-w-full max-h-[85vh] object-contain shadow-2xl rounded-sm transform scale-95 transition-transform duration-300">`
     }
     
+    // Animasi Scale In
     setTimeout(() => {
       const mediaEl = lightboxContent.firstElementChild
       if (mediaEl) {
@@ -89,19 +116,22 @@ const { images } = Astro.props
     currentGalleryIndex = index
     renderLightboxMedia(index)
     lightbox?.classList.remove('opacity-0', 'pointer-events-none')
-
-    document.body.style.overflow = 'hidden' 
+    
+    // Kunci scroll untuk body dan html
+    document.body.style.overflow = 'hidden'
     document.documentElement.style.overflow = 'hidden'
   }
 
   function closeLightbox() {
     lightbox?.classList.add('opacity-0', 'pointer-events-none')
-    if(lightboxContent) lightboxContent.innerHTML = ''
-
-    document.body.style.overflow = '' 
+    if(lightboxContent) lightboxContent.innerHTML = '' // Hapus elemen agar video berhenti
+    
+    // Buka kunci scroll untuk body dan html
+    document.body.style.overflow = ''
     document.documentElement.style.overflow = ''
   }
 
+  // Event Listeners
   galleryItems.forEach((item, index) => {
     item.addEventListener('click', () => openLightbox(index))
   })
